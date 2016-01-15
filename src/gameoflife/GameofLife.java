@@ -10,6 +10,7 @@ public class GameofLife {
       System.out.println(yes);
       System.out.println(test);
       System.out.println(no);
+      System.out.println("Heihei");
    }
    
 }
