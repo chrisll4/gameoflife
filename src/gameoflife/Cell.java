@@ -8,8 +8,8 @@ public class Cell {
    
    private void countNeighbours() {
      //blabla
-     byte x = 0;
-     neighbours = x;
+     byte b = 0;
+     neighbours = b;
    }
    // TODO: andre variabler? funksjoner? annet?
 }
