@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package gameoflife;
 
 import java.net.URL;
@@ -22,16 +17,13 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.paint.*;
 import javafx.util.Duration;
 
-/**
- *
- * @author Fredrik
- */
+
 public class GoLController implements Initializable {
    
   @FXML private Canvas canvas;
   private GraphicsContext gc;
   private Timeline timeline;
-  private Button start;
+  private double frameRate = 30;
   
    
   @FXML
@@ -47,35 +39,49 @@ public class GoLController implements Initializable {
     timeline.pause();
   }
   
+  @FXML
+  private void reset(ActionEvent e) {
+    timeline.pause();
+    gb.populateBoard();
+    draw();
+  }
+  
+  @FXML
+  private void setFrameRate(int fps) {
+    frameRate = fps;
+  }
+  
+  Gameboard gb;
   
   @Override
   public void initialize(URL url, ResourceBundle rb) {
-    Duration dura = Duration.millis(500);
+    Duration dura = Duration.millis(1000/frameRate);
     KeyFrame keyf = new KeyFrame(dura, (ActionEvent e) -> {draw();});
     timeline = new Timeline();
     timeline.setCycleCount(Animation.INDEFINITE);
     timeline.getKeyFrames().add(keyf);
-    Gameboard.populateBoard();
+    
+    gb = new Gameboard();
+    gb.setPattern(GoL.gosper);
+    gb.populateBoard();
     draw();
   }
    
   private void draw() {
-    float cellsize = (float) canvas.getHeight()/Gameboard.boardRows;
+    float cellsize = (float) canvas.getHeight()/gb.boardRows;
     gc = canvas.getGraphicsContext2D();
     gc.setFill(Color.WHITE);
     gc.fillRect(0,0,canvas.getWidth(),canvas.getHeight());
     
-    gc.setFill(Color.DARKSLATEGREY);
-    
-    for (int i=0; i<Gameboard.board.length;i++) {
-      for (int j=0; j<Gameboard.board[0].length;j++) {
-        if (Gameboard.board[i][j]==1) {
+    for (int i=0; i<gb.boardCols;i++) {
+      for (int j=0; j<gb.boardRows;j++) {
+        if (gb.board[i][j].alive == true) {
+          gc.setFill(Color.DARKSLATEGREY);
           gc.fillRect(i*cellsize,j*cellsize,cellsize,cellsize);
         }
       }
     }
-    
-    Gameboard.nextGeneration();
+    gb.nextGeneration();
   }
    
 }

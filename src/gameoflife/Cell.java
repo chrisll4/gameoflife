@@ -3,18 +3,18 @@ package gameoflife;
 public class Cell {
   
   public Cell() {
-    
   }
   
-  boolean alive = true;
+  boolean alive = false;
   byte neighbours = 0;
-  byte x = 0;
-  byte y = 0;
-   
-  private void countNeighbours() {
-    //blabla
-    byte b = 0;
-    neighbours = b;
+  
+  public void changeLife() {
+    if (alive == true && neighbours < 2) { //Underpopulation
+      alive = false;
+    } else if (alive == true && neighbours > 3) { //Overpopulation
+      alive = false;
+    } else if (alive == false && neighbours == 3) { //Reproduction
+      alive = true;
+    }
   }
-   // TODO: andre variabler? funksjoner? annet?
 }
