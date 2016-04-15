@@ -41,7 +41,7 @@
         <String fx:value="Edit"/>
         <String fx:value="Load pattern"/>
     </ChoiceBox>
-    <Button text="Animation" GridPane.columnIndex="7" GridPane.rowIndex="4" />
+    <Button text="Animation" GridPane.columnIndex="7" GridPane.rowIndex="4" onAction="#anim" />
     <Button text="Music" GridPane.columnIndex="8" GridPane.rowIndex="4" />
     <Button text="Save" GridPane.columnIndex="9" GridPane.rowIndex="4" />     
   </children>
