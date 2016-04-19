@@ -12,7 +12,7 @@ import javax.sound.sampled.SourceDataLine;
 public class Sound {
   /**
    * Produces a short sound of downward bending pitch.
-   * @throws LineUnavailableException 
+   * @throws LineUnavailableException Exception if line is already in use
    */
   public static void makeSound() throws LineUnavailableException {
     byte[] buf = new byte[1];

@@ -42,7 +42,7 @@ public class Reader {
   }
 
   String tx2 = "";
-  public String[][] tab;
+  public byte[][] tab;
   
   /**
    * Method to interpret the pattern string from an RLE file (each character
@@ -54,12 +54,11 @@ public class Reader {
    * @param sTab  Pattern string from the RLE file, as array of characters
    */
   public void lagTabell(int x, int y, byte[] sTab) {
-    tx2 = "";
-    tab = new String[x][y];
+    tab = new byte[x][y];
     
     for (int i = 0; i < x; i++) {
       for (int j = 0; j < y; j++) {
-        tab[i][j] = "";
+        tab[i][j] = 0;
       }
     }
     
@@ -78,11 +77,11 @@ public class Reader {
         */
         for (int j = 0; j < c; j++) {
           if (sTab[i+1] == 98) { //hvis b (unicode)
-            tab[a][b] = " ";     //død celle på denne plassen i tabellen
+            tab[a][b] = 0;     //død celle på denne plassen i tabellen
               if (a < tab.length-1)
                 a++;
           } else if (sTab[i+1] == 111) { //hvis o (unicode)
-            tab[a][b] = "X";             //levende celle her i tabellen
+            tab[a][b] = 1;             //levende celle her i tabellen
               if (a < tab.length-1)
                 a++;
           }
@@ -90,11 +89,11 @@ public class Reader {
         i++;
         //under sjekkes det for døde/levende celler som ikke er repeterende
       } else if (sTab[i] == 98) { // hvis b (unicode)
-        tab[a][b] = " ";          // død celle her i tabellen
+        tab[a][b] = 0;          // død celle her i tabellen
         if (a < tab.length-1)
           a++;
       } else if (sTab[i] == 111) { // hvis o (unicode)
-        tab[a][b] = "X";           // levende celler her i tabellen
+        tab[a][b] = 1;           // levende celler her i tabellen
         if (a < tab.length-1)
           a++;
       } else if (sTab[i] == 36) { // hvis $ (unicode)[end of line]
@@ -106,14 +105,6 @@ public class Reader {
         break;
       }
     }
-    
-    for (int k = 0; k < x; k++) {
-      for (int l = 0; l <y; l++) {
-        tx2 += tab[l][k];
-      }
-      tx2 += "\n";
-    }
-    
   };
   
  
@@ -222,7 +213,7 @@ public class Reader {
           System.out.println();
           
           
-          //lagTabell(x,y,cTab);
+          lagTabell(x,y,cTab);
           
           //text.setText(tx2);
           
@@ -236,7 +227,7 @@ public class Reader {
         String s = "Incorrect file format.";
         alert.setContentText(s);
         alert.show();
-      }   
+      }
     }
     
     /**

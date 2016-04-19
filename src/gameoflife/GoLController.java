@@ -91,6 +91,7 @@ public class GoLController implements Initializable {
    */
   @FXML
   private void anim() throws IOException {
+    timeline.pause();
     Stage anim = new Stage();
     Parent root = new Group();
     Scene scene = new Scene(root, 200, 200);
@@ -117,8 +118,16 @@ public class GoLController implements Initializable {
       Reader read = new Reader();
       try {
         read.loadUrl();
+        gb.setPattern(read.tab);
+        gb.populateBoard();
+        draw();
       } catch (NoSuchElementException nse) {
         System.out.println("Window closed, no file specified");
+        try {
+          Sound.makeSound();
+        } catch (LineUnavailableException ex) {
+          Logger.getLogger(GoLController.class.getName()).log(Level.SEVERE, null, ex);
+        }
       }
     });
     
@@ -135,6 +144,9 @@ public class GoLController implements Initializable {
         try {
         Reader read = new Reader();
         read.loadFile(path);
+        gb.setPattern(read.tab);
+        gb.populateBoard();
+        draw();
         } catch (RuntimeException rt){
           System.out.println("ya dun goofed");
         }
@@ -162,8 +174,8 @@ public class GoLController implements Initializable {
    * Method to set up the initial settings of the program, including
    * defining timeline animation, creating a Gameboard object and filling it,
    * as well as drawing the initial configuration to the canvas object.
-   * @param url
-   * @param rb 
+   * @param url Default URL object
+   * @param rb  Default ResourceBundle object
    */
   @Override
   public void initialize(URL url, ResourceBundle rb) {
@@ -179,7 +191,7 @@ public class GoLController implements Initializable {
     
     //Create Gameboard object, set initial patter, and populate board with cells
     gb = new Gameboard();
-    gb.setPattern(Patterns.glider);
+    gb.setPattern(Patterns.gosper);
     gb.populateBoard();
     
     //Draw initial cell configuration

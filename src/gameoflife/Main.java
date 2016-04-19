@@ -1,5 +1,6 @@
 package gameoflife;
 
+import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,11 +16,11 @@ public class Main extends Application {
   
   /**
    * Start method to define the basics of the window that opens when run.
-   * @param stage
-   * @throws Exception 
+   * @param stage The initial stage
+   * @throws IOException Exception for faulty FXML loading
    */
   @Override
-  public void start(Stage stage) throws Exception {
+  public void start(Stage stage) throws IOException {
       
     Parent root = FXMLLoader.load(getClass().getResource("FXMLgol.fxml"));
       

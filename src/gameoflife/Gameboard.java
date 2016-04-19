@@ -18,12 +18,12 @@ public class Gameboard {
   /**
    * Number of columns on board
    */
-  protected int boardCols = 10;
+  protected int boardCols = 120;
   
   /**
    * Number of rows on board
    */
-  protected int boardRows = 10;
+  protected int boardRows = 80;
   
   /**
    * Number of columns on pattern
