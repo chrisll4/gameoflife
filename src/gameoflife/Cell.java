@@ -1,7 +1,15 @@
 package gameoflife;
-
+/**
+ * Cell class, containing two variables (boolean alive, and byte neighbours).
+ * Also contains method for changing life status of the cell, depending on
+ * number of neighbours. Meant for use in Cell-arrays to represent cells 
+ * on the game board in Game of Life. 
+ */
 public class Cell {
   
+  /**
+   * Empty constructor
+   */
   public Cell() {
   }
   

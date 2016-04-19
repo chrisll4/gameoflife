@@ -1,13 +1,22 @@
 package gameoflife;
-
-public class GoL {
-   
+/**
+ * Simple class containing some basic patterns for selection in GUI.
+ * @author Fredrik
+ */
+public class Patterns {
+  
+  /**
+   * Byte information for a glider pattern
+   */
   protected static byte[][] glider = {
     {0,0,1},
     {1,0,1},
     {0,1,1}
   };
   
+  /**
+   * Byte information for a Gosper glider gun pattern
+   */
   protected static byte[][] gosper = {
     {0,0,0,0,1,1,0,0,0},
     {0,0,0,0,1,1,0,0,0},

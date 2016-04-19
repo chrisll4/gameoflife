@@ -1,4 +1,4 @@
-package GameofLife;
+package gameoflife;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,22 +30,28 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser.ExtensionFilter;
 
-public class Reader extends Application {
+
+/**
+ * Class containing methods to read pattern information from RLE files,
+ * either locally or from the internet via URL.
+ * @author Fredrik
+ */
+public class Reader {
    
-  
-  String txt = "";
+  public Reader() {
+  }
+
   String tx2 = "";
-  
-   
-  Button load = new Button("Load pattern");
-  Button loadUrl = new Button("Load from URL");
-  
   public String[][] tab;
   
-  
-  
-  /* metode som mottar bredde og lengde på 2d array, samt RLE-kode 
-   * som angir cellestatus for de individuelle cellene 
+  /**
+   * Method to interpret the pattern string from an RLE file (each character
+   * placed in a separate element of an array), loaded with either
+   * loadFile() or loadUrl(), as well as creating an array representation of
+   * the pattern, to be sent to Gameboard's setPattern() method as a parameter.
+   * @param x  Number of columns in the pattern
+   * @param y  Number of rows in the pattern
+   * @param sTab  Pattern string from the RLE file, as array of characters
    */
   public void lagTabell(int x, int y, byte[] sTab) {
     tx2 = "";
@@ -60,10 +66,10 @@ public class Reader extends Application {
     int a = 0;
     int b = 0;
     
-    /* Løkker som sjekker alle unicode-verdier fo å kunne danne mønster */
+
+    // Loops to check all unicode values in pattern String array
     for (int i = 0; i < sTab.length; i++) {
-      if (sTab[i] >= 48 && sTab[i] <= 57) { //hvis siffer, 0-9 (unicode)
-        //under konverteres unicode-verdi til et tall (0-9)
+      if (sTab[i] >= 48 && sTab[i] <= 57) {
         int c = Integer.parseInt(String.valueOf((char)sTab[i]));
         
         /*Under brukes tallet unicode-verdien representerer, til å
@@ -110,17 +116,14 @@ public class Reader extends Application {
     
   };
   
-  //Definerer hva som skjer når man trykker load-knapp
-    public void loadFile(Stage stage) {
-      File file;
-      Path path;
-      FileChooser fc = new FileChooser();
-      ExtensionFilter filt = new ExtensionFilter("RLE files","*.rle");
-      fc.setTitle("Choose RLE-file to load");
-      fc.setSelectedExtensionFilter(filt);
-      file = fc.showOpenDialog(stage);
-      path = file.toPath();
-      
+ 
+  /**
+   * Method to load RLE file chosen in a Filechooser, interpret the file's
+   * pattern, and return the pattern code as a byte-array of the individual
+   * characters' unicode values.
+   * @param path  Local path for the RLE file
+   */
+    public void loadFile(Path path) {      
       /*Sjekker om det er en ikke-null path, og om den leder til en RLE-fil,
       og leser filen hvis betingelsene er møtt.
       */
@@ -130,7 +133,7 @@ public class Reader extends Application {
               new BufferedReader(new InputStreamReader(in))) {
           String line = null;
 
-          ArrayList<String> strTab = new ArrayList();
+          ArrayList<String> strTab = new ArrayList<>();
           
           int nLines = 0;
           int x = 0;
@@ -138,7 +141,6 @@ public class Reader extends Application {
           
           //Legger hver linje i filen inn i array
           while ((line = reader.readLine()) != null) {
-            txt = txt + line + "\n";
             strTab.add(line);
             nLines ++;
           }
@@ -212,20 +214,20 @@ public class Reader extends Application {
           */
           byte[] cTab = strTab.get(nLast+1).getBytes();
           
+          //Skriver ut tegnene i mønsterlinjen for å sjekke korrekt tolking
           for (int i = 0; i < cTab.length; i++) {
             System.out.print((char)cTab[i]);
           }
           
-          //Skriver ut tegnene i mønsterlinjen for å sjekke korrekt tolking
           System.out.println();
           
           
-          lagTabell(x,y,cTab);
+          //lagTabell(x,y,cTab);
           
           //text.setText(tx2);
           
-        } catch (IOException x) {
-          System.err.println(x);
+        } catch (IOException ex) {
+          System.out.println("bajs");
         }
       } else { //Feilmelding hvis man forsøker å lese et annet filformat
         Alert alert = new Alert(AlertType.ERROR);
@@ -235,42 +237,14 @@ public class Reader extends Application {
         alert.setContentText(s);
         alert.show();
       }   
-      };
-  
-  @Override
-  public void start(Stage stage) throws Exception {
-    Group root = new Group();
-    Scene scene = new Scene(root, 300, 230);
-    stage.setScene(scene);
-    stage.setTitle("Tekstboks");
-      
-    GridPane grid = new GridPane();
-    grid.setPadding(new Insets(5, 5, 5, 5));      
-    grid.setVgap(5);
-    grid.setHgap(5);
-    scene.setRoot(grid);
-      
-    TextArea text = new TextArea("Hei");
-    text.setPrefWidth(300);
-    text.setPrefHeight(200);
-    text.setWrapText(true);
-    text.setFont(new Font("Courier New", 12));
-    text.setEditable(false);
-    text.setText("Jada iii");
-    grid.add(text,0,0,2,1);
-      
-    grid.add(load,0,1);
-    grid.add(loadUrl,1,1);
+    }
     
-    
-    
-    
-      
-    
-    /*Lasting fra URL er stort sett samme som å laste fra lokal fil,
-    men litt annerledes i starten.
-    */
-      loadUrl.setOnAction((ActionEvent e) -> {
+    /**
+     * Method to load RLE file from the input URL, 
+     * interpret the file's pattern, and returning the pattern as an array 
+     * for use in other methods.
+     */
+    public void loadUrl() {
         //Åpner dialog for å skrive inn URL
         TextInputDialog dialog = new TextInputDialog("http://");
         dialog.setTitle("Load pattern from URL");
@@ -278,7 +252,7 @@ public class Reader extends Application {
          
         Optional<String> res = dialog.showAndWait();
          
-        ArrayList<String> strTab = new ArrayList();
+        ArrayList<String> strTab = new ArrayList<>();
           
         int nLines = 0;
         int x = 0;
@@ -362,9 +336,9 @@ public class Reader extends Application {
             System.out.println();
           
           
-            lagTabell(x,y,cTab);
+            /*lagTabell(x,y,cTab);
           
-            text.setText(tx2);
+            text.setText(tx2);*/
             }
           } catch (MalformedURLException ex) {
               Logger.getLogger(Reader.class.getName()).log(Level.SEVERE, null, ex);
@@ -379,16 +353,6 @@ public class Reader extends Application {
           alert.setContentText(s);
           alert.show();
         }
-      });
-      
-      
-      
-      stage.show();
-      
-   }
-   
-   public static void main(String[] args) throws IOException {
-      launch(args);
-   }
+      };
    
 }
