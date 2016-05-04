@@ -9,6 +9,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.collections.*?>
 
 
 
@@ -21,28 +22,21 @@
   <children>
     <HBox GridPane.columnIndex="0" GridPane.rowIndex="0"
        GridPane.columnSpan="10" GridPane.rowSpan="4"
-       prefWidth="740" prefHeight="480">  
+       prefWidth="740" prefHeight="520">  
       <Canvas width="720" height="480" fx:id="canvas" />
     </HBox>
-    <Button GridPane.columnIndex="0" GridPane.rowIndex="4" text="Start" onAction="#start"/>
-    <Button GridPane.columnIndex="1" GridPane.rowIndex="4" text="Stop" onAction="#stop" />
-    <Button GridPane.columnIndex="2" GridPane.rowIndex="4" text="Reset" onAction="#reset" /> 
-    <Label GridPane.columnIndex="3" GridPane.rowIndex="4" text="Grid:" />  
-    <ChoiceBox GridPane.columnIndex="4" GridPane.rowIndex="4" value="45x30">
-        <String fx:value="45x30"/>
-        <String fx:value="90x60"/>
-        <String fx:value="120x80"/>
-    </ChoiceBox>
-    <Label GridPane.columnIndex="5" GridPane.rowIndex="4" text="Pattern:" />  
-    <ChoiceBox GridPane.columnIndex="6" GridPane.rowIndex="4" value="Glider" fx:id="pattern">
-        <String fx:value="Glider"/>
-        <String fx:value="Gosper glider gun"/>
-        <String fx:value="Random"/>
-        <String fx:value="Edit"/>
-        <String fx:value="Load pattern"/>
-    </ChoiceBox>
-    <Button text="Animation" GridPane.columnIndex="7" GridPane.rowIndex="4" onAction="#anim" />
-    <Button text="Music" GridPane.columnIndex="8" GridPane.rowIndex="4" />
-    <Button text="Save" GridPane.columnIndex="9" GridPane.rowIndex="4" />     
+   
+    <Button GridPane.columnIndex="0" GridPane.rowIndex="4" text="Start/stop" onAction="#startStop"/>
+    <Button GridPane.columnIndex="1" GridPane.rowIndex="4" text="Reset" onAction="#reset" />
+    <Label text="Grid size:" GridPane.columnIndex="2" GridPane.rowIndex="4"/> 
+    <!--<ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="5" fx:id="gridSize" value="45x30"/>-->
+    <Slider GridPane.columnIndex="2" GridPane.rowIndex="5" fx:id="gridSlider" prefWidth="100"/>  
+    <Label text="Pattern:" GridPane.columnIndex="3" GridPane.rowIndex="4"/>  
+    <ChoiceBox GridPane.columnIndex="3" GridPane.rowIndex="5" fx:id="patternList" value="Glider" />
+    <Button text="Animation" GridPane.columnIndex="4" GridPane.rowIndex="4" onAction="#reader" />
+    <Button text="Music" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+    <Button text="Save" GridPane.columnIndex="6" GridPane.rowIndex="4" onAction="#generateRandom" />
+    <Label GridPane.columnIndex="7" GridPane.rowIndex="4" fx:id="gen" text="gens"/>
+    <Label GridPane.columnIndex="7" GridPane.rowIndex="5" fx:id="dim" text="dim"/>  
   </children>
 </GridPane>

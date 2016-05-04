@@ -8,23 +8,24 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- * Main class to run the Game of Life program.
- * @author Fredrik
+ * Main class to load FXML and run the Game of Life program.
+ * @author Fredrik, Christine (pair programming)
  */
 public class Main extends Application {
    
   
   /**
    * Start method to define the basics of the window that opens when run.
-   * @param stage The initial stage
+   * @param stage The initial (default) stage
    * @throws IOException Exception for faulty FXML loading
+   * @author Fredrik, Christine (pair programming)
    */
   @Override
   public void start(Stage stage) throws IOException {
       
     Parent root = FXMLLoader.load(getClass().getResource("FXMLgol.fxml"));
       
-    Scene scene = new Scene(root, 740, 540);
+    Scene scene = new Scene(root, 740, 580);
       
     stage.setTitle("Game of Life");
     stage.setScene(scene);
