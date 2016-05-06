@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -37,11 +38,11 @@ import javax.sound.sampled.LineUnavailableException;
 /**
  * Controller class that imports FXML data to produce GUI and controls 
  * animation and board data. Also controls GUI events.
- * @author Fredrik, Chrinstine (where noted)
  */
 public class GoLController implements Initializable {
    
   @FXML private Canvas canvas;
+  Canvas canvas2 = new Canvas(720,480);
   @FXML private Label gen;
   @FXML private Label dim;
   @FXML private Label fpsLab;
@@ -55,6 +56,11 @@ public class GoLController implements Initializable {
   @FXML private ChoiceBox patternList;
   @FXML private Slider gridSlider;
   @FXML private Slider fpsSlider;
+  private GraphicsContext gc2;
+  private double xCo;
+  private double yCo;
+  GameboardDynamic gb2 = new GameboardDynamic();
+  protected ArrayList<ArrayList<Cell>> board2Dyn;
   
   /**
    * Method to start animation if not running, or pause animation if running
@@ -79,6 +85,7 @@ public class GoLController implements Initializable {
   private void reset(ActionEvent e) {
     timeline.stop();
     gb.setPattern(gb.patOrigin);
+    gb.initialiseBoard();
     gb.populateBoard();
     draw();
     resetGens();
@@ -94,6 +101,7 @@ public class GoLController implements Initializable {
     timeline.stop();
     Patterns.generateRandomPattern(gb.boardCols, gb.boardRows);
     gb.setPattern(Patterns.randomPattern);
+    gb.initialiseBoard();
     gb.populateBoard();
     draw();
     resetGens();
@@ -105,7 +113,7 @@ public class GoLController implements Initializable {
    */
   private void updateGens() {
     gens++;
-    gen.setText("Generations: "+gens);
+    gen.setText("Generations: " + gens);
   }
   
   /**
@@ -114,11 +122,12 @@ public class GoLController implements Initializable {
    */
   private void resetGens() {
     gens = 0;
-    gen.setText("Generations: "+gens);
+    gen.setText("Generations: " + gens);
   }
   
   /**
    * Method to update Grid label
+   * @author Fredrik
    */
   private void updateDim() {
     dim.setText("Grid: " + gb.boardCols + "x" + gb.boardRows);
@@ -148,7 +157,7 @@ public class GoLController implements Initializable {
    * @author Fredrik
    */
   private void updateFrameRate() {
-    fpsLab.setText("FPS: " + frameRate);
+    fpsLab.setText("FPS: " + (int)frameRate);
   }
   
   /**
@@ -161,11 +170,11 @@ public class GoLController implements Initializable {
   @FXML
   private void reader() throws IOException {
     timeline.pause();
-    Stage stg = new Stage();
+    Stage readerStage = new Stage();
     Parent root = new Group();
     Scene scene = new Scene(root, 200, 200);
-    stg.setScene(scene);
-    stg.setTitle("Load pattern from RLE file");
+    readerStage.setScene(scene);
+    readerStage.setTitle("Load pattern from RLE file");
     
     GridPane grid = new GridPane();
     grid.setPadding(new Insets(10, 10, 10, 10));      
@@ -173,25 +182,26 @@ public class GoLController implements Initializable {
     grid.setHgap(10);
     scene.setRoot(grid);
     
-    Label lab = new Label("Load local file");
-    Label labUrl = new Label("Load from URL:");
-    Button btn = new Button("Choose file...");
-    Button btm = new Button("Enter URL...");
+    Label labelFile = new Label("Load local file");
+    Label labelUrl = new Label("Load from URL:");
+    Button buttonFile = new Button("Choose file...");
+    Button buttonUrl = new Button("Enter URL...");
     
-    btn.setMinWidth(100);
-    btn.setMinHeight(50);
+    buttonFile.setMinWidth(100);
+    buttonFile.setMinHeight(50);
     
-    btm.setMinWidth(100);
-    btm.setMinHeight(50);
+    buttonUrl.setMinWidth(100);
+    buttonUrl.setMinHeight(50);
     
-    btm.setOnAction((ActionEvent e) -> {
+    buttonUrl.setOnAction((ActionEvent e) -> {
       Reader read = new Reader();
       try {
         read.loadUrl();
         gb.setPattern(read.tab);
+        gb.initialiseBoard();
         gb.populateBoard();
         draw();
-        stg.hide();
+        readerStage.hide();
       } catch (NoSuchElementException nse) {
         System.out.println("Window closed, no file specified");
         try {
@@ -202,22 +212,24 @@ public class GoLController implements Initializable {
       }
     });
     
-    btn.setOnAction((ActionEvent e) -> {
+    buttonFile.setOnAction((ActionEvent e) -> {
       File file;
       Path path;
       FileChooser fc = new FileChooser();
       FileChooser.ExtensionFilter filt = new FileChooser.ExtensionFilter("RLE files","*.rle");
+      
       fc.setTitle("Choose RLE-file to load");
       fc.setSelectedExtensionFilter(filt);
-      file = fc.showOpenDialog(stg);
+      file = fc.showOpenDialog(readerStage);
       if (file != null) {
         path = file.toPath();
         Reader read = new Reader();
         read.loadFile(path);
         gb.setPattern(read.tab);
+        gb.initialiseBoard();
         gb.populateBoard();
         draw();
-        stg.hide();
+        readerStage.hide();
       } else {
         System.out.println("Window closed, no file selected");
         try {
@@ -229,12 +241,12 @@ public class GoLController implements Initializable {
       
     });
     
-    grid.add(lab, 0, 0);
-    grid.add(btn, 0, 1);
-    grid.add(labUrl, 0, 2);
-    grid.add(btm, 0, 3);
+    grid.add(labelFile, 0, 0);
+    grid.add(buttonFile, 0, 1);
+    grid.add(labelUrl, 0, 2);
+    grid.add(buttonUrl, 0, 3);
     
-    stg.show();
+    readerStage.show();
   }
   
   GameboardDynamic gb;
@@ -245,7 +257,7 @@ public class GoLController implements Initializable {
    * as well as drawing the initial configuration to the canvas object.
    * @param url Default URL object
    * @param rb  Default ResourceBundle object
-   * @author Fredrik, Christine (pair programming): UI setup
+   * @author Fredrik, Christine (pair programming): GUI setup
    * @author Fredrik: listeners, animation, board population
    */
   @Override
@@ -254,6 +266,7 @@ public class GoLController implements Initializable {
     //Create Gameboard object, set initial pattern, and populate board with cells
     gb = new GameboardDynamic();
     gb.setPattern(Patterns.glider);
+    gb.initialiseBoard();
     gb.populateBoard();
     
     //Set initial text for dynamic labels
@@ -262,7 +275,6 @@ public class GoLController implements Initializable {
     updateFrameRate();
     
     //Setup for gridSlider
-    gridSlider.setShowTickMarks(false);
     gridSlider.setMin(30);
     gridSlider.setMax(480);
     gridSlider.setValue(30);
@@ -273,6 +285,7 @@ public class GoLController implements Initializable {
             Number oval, Number nval) -> {
               gb.setBoardDim((int)(1.5*nval.intValue()), nval.intValue());
               gb.setPattern(gb.board);
+              gb.initialiseBoard();
               gb.populateBoard();
               updateDim();
               draw();      
@@ -282,8 +295,6 @@ public class GoLController implements Initializable {
     fpsSlider.setMin(1);
     fpsSlider.setMax(60);
     fpsSlider.setValue(10);
-    fpsSlider.setMajorTickUnit(20);
-    fpsSlider.setShowTickMarks(true);
     
     //Listener for FPS slider
     fpsSlider.valueProperty().addListener((
@@ -298,7 +309,7 @@ public class GoLController implements Initializable {
     
     //Set items in the patternList ChoiceBox
     patternList.setItems(FXCollections.observableArrayList(
-          "Glider","Gosper glider gun","Pulsar")
+          "Glider","Gosper glider gun","Pulsar","Backrake")
     );
     
     /*
@@ -314,6 +325,7 @@ public class GoLController implements Initializable {
                 case 0:
                   timeline.pause();
                   gb.setPattern(Patterns.glider);
+                  gb.initialiseBoard();
                   gb.populateBoard();
                   resetGens();
                   draw();
@@ -321,6 +333,7 @@ public class GoLController implements Initializable {
                 case 1:
                   timeline.pause();
                   gb.setPattern(Patterns.gosper);
+                  gb.initialiseBoard();
                   gb.populateBoard();
                   resetGens();
                   draw();
@@ -328,6 +341,15 @@ public class GoLController implements Initializable {
                 case 2:
                   timeline.pause();
                   gb.setPattern(Patterns.pulsar);
+                  gb.initialiseBoard();
+                  gb.populateBoard();
+                  resetGens();
+                  draw();
+                  break;
+                case 3:
+                  timeline.pause();
+                  gb.setPattern(Patterns.backrake);
+                  gb.initialiseBoard();
                   gb.populateBoard();
                   resetGens();
                   draw();
@@ -361,9 +383,7 @@ public class GoLController implements Initializable {
   
   
   /**
-   * Method containing instructions for drawing cells to canvas object,
-   * as well as calling Gameboard's nextGeneration() method to calculate the
-   * next configuration of living and non-living cells.
+   * Method containing instructions for drawing cells to canvas object
    * @author Fredrik
    */
   private void draw() {
@@ -386,6 +406,35 @@ public class GoLController implements Initializable {
         }
       }
     }
+  }
+  
+  /**
+   * Method to open pattern editor window.
+   * @author Christine
+   */
+  @FXML
+  private void editor() {
+    timeline.pause();
+    Stage editor = new Stage();
+    GridPane root = new GridPane();
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("FXMLEditor.fxml"));
+    
+      try {
+          root = loader.load();
+      } catch (IOException ex) {
+          Logger.getLogger(GoLController.class.getName()).log(Level.SEVERE, null, ex);
+          System.out.println("IOExeption. Noe gikk galt");
+      }
+      GoLControllerEditor editorcontroller = loader.getController();
+      editorcontroller.setEditorController(gb.board);
+    Scene scene = new Scene(root, 900, 500);
+    String css = this.getClass().getResource("GoLStyleSheet.css").toExternalForm(); 
+    scene.getStylesheets().add(css);
+    editor.setScene(scene);
+    editor.setTitle("GOL Editor");
+    editor.show();
+      
+   
   }
   
    

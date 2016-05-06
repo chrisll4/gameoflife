@@ -1,0 +1,13 @@
+/* 
+    Author     : Christine
+*/
+.root{
+    -fx-background-color:#BFD2D9;
+}
+#textHeader{
+    -fx-font-size: 1.9em;
+    -fx-alignment: CENTER;
+}
+.button{
+    -fx-background-radius: 0.5em;
+}

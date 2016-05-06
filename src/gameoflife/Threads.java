@@ -16,7 +16,8 @@ public class Threads {
   
   /*
    * The following four threads perform the same tasks as the nextGeneration()
-   * method from Gameboard, though each thread only covers a quarter of the board.
+   * method from Gameboard, though each thread only works on a 
+   * quarter of the board.
    */
 
   static Thread thr1 = new Thread(() -> {

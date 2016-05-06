@@ -1,9 +1,11 @@
 package gameoflife;
 
-import junit.framework.Assert;
-import static junit.framework.Assert.assertTrue;
 import junit.framework.TestCase;
 
+/**
+ * Test class for Gameboard class
+ * @author Fredrik
+ */
 public class GameboardTest extends TestCase {
   
   public GameboardTest(String testName) {
@@ -24,7 +26,7 @@ public class GameboardTest extends TestCase {
         txt += tab[i][j];
       }
     }
-    Assert.assertEquals("001101011", txt);
+    assertEquals("001101011", txt);
   }
 
   /**
@@ -36,10 +38,10 @@ public class GameboardTest extends TestCase {
     int r = 5;
     Gameboard instance = new Gameboard();
     instance.setBoardDim(c, r);
-    Assert.assertEquals(4, instance.boardCols);
-    Assert.assertEquals(5, instance.boardRows);
-    Assert.assertFalse(instance.boardCols != 4);
-    Assert.assertFalse(instance.boardRows != 5);
+    assertEquals(4, instance.boardCols);
+    assertEquals(5, instance.boardRows);
+    assertFalse(instance.boardCols != 4);
+    assertFalse(instance.boardRows != 5);
   }
 
   /**
@@ -74,9 +76,9 @@ public class GameboardTest extends TestCase {
     instance.setPattern(Patterns.glider);
     instance.populateBoard();
     instance.countNeighbours();
-    Assert.assertEquals(10, instance.totNeighbours);
-    Assert.assertTrue(instance.totNeighbours == 10);
-    Assert.assertFalse(instance.totNeighbours != 10);
+    assertEquals(10, instance.totNeighbours);
+    assertTrue(instance.totNeighbours == 10);
+    assertFalse(instance.totNeighbours != 10);
   }
   
 }

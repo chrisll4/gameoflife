@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.*?>
+
+<GridPane id="GridPane" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="gameoflife.GoLControllerEditor"
+          hgap="10" vgap="10">
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+    <children>
+        <VBox  spacing="10" alignment="TOP_LEFT" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.rowSpan="6" >
+            <Text text="Meta Data" id="textHeader"/>
+            <TextField fx:id="GameName" promptText="Game name" prefWidth="120"/>
+            <TextField fx:id="Author" promptText="Author" prefWidth="120"/> 
+            <TextField fx:id="Description" promptText="Description" prefWidth="120"/> 
+            <Button text="Save"/>
+            <Button text="Cancel"/>
+        </VBox>    
+        <VBox GridPane.columnIndex="3" GridPane.rowIndex="0" prefWidth="720" prefHeight="480" GridPane.rowSpan="6" >  
+            <Canvas width="720" height="480" fx:id="canvas2" />
+        </VBox>
+    </children>
+    
+</GridPane>
+    
+    
+    
+    
+    
+    
+    
+

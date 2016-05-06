@@ -109,15 +109,10 @@ public class Gameboard {
     boardRows = r;
   }
   
-  
   /**
-   * Places the cells in the 'pattern' array, in the 'board' array,
-   * and places it near the center.
+   * Method to initialise board
    */
-  protected void populateBoard() {
-    /*
-    Initialise board array, and initialise Cell objects within it
-    */
+  protected void initialiseBoard() {
     board = new Cell[boardCols][boardRows];
     
     for (int i=0; i<boardCols; i++) {
@@ -125,21 +120,13 @@ public class Gameboard {
         board[i][j] = new Cell();
       }
     }
-    
-    /*
-    Place Cells from pattern into board, centered by "boardCols/2-patCols/2".
-    */
-    /*
-    if (patCols>boardCols) {
-      int ratio = patCols/boardCols;
-      for (int i=(); i<patCols; i++) {
-        for (int j=0; j<patRows; j++) {        
-          if (pattern[i][j].alive == true) {
-            board[i+boardCols/2-patCols/2][j+boardRows/2-patRows/2].alive = true;
-          }
-        }
-      }
-    } else {*/
+  }
+  
+  /**
+   * Places the cells in the 'pattern' array, in the 'board' array,
+   * and places it near the center.
+   */
+  protected void populateBoard() {
       for (int i=0; i<patCols; i++) {
         for (int j=0; j<patRows; j++) {
           if (pattern[(i+patCols)%patCols][(j+patRows)%patRows].alive == true) {

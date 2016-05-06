@@ -29,14 +29,15 @@
     <Button GridPane.columnIndex="0" GridPane.rowIndex="4" text="Start/stop" onAction="#startStop"/>
     <Button GridPane.columnIndex="0" GridPane.rowIndex="5" text="Reset" onAction="#reset" />
     <Label text="Grid size:" GridPane.columnIndex="1" GridPane.rowIndex="5"/> 
-    <Slider GridPane.columnIndex="2" GridPane.rowIndex="5" fx:id="gridSlider" prefWidth="100"/>  
+    <Slider GridPane.columnIndex="2" GridPane.rowIndex="5" fx:id="gridSlider" 
+            prefWidth="100"/>  
     <Label text="Pattern:" GridPane.columnIndex="1" GridPane.rowIndex="4"/>  
     <ChoiceBox GridPane.columnIndex="2" GridPane.rowIndex="4" fx:id="patternList" value="Glider" />
     <Button text="Load RLE" GridPane.columnIndex="4" GridPane.rowIndex="4" onAction="#reader" />
     <Label text="Framerate:" GridPane.columnIndex="4" GridPane.rowIndex="5" />
     <Slider GridPane.columnIndex="5" GridPane.rowIndex="5" fx:id="fpsSlider" 
-            GridPane.columnSpan="2" GridPane.rowSpan="1" />    
-    <Button text="Pattern editor" GridPane.columnIndex="5" GridPane.rowIndex="4" />
+            GridPane.columnSpan="2" GridPane.rowSpan="1"/>    
+    <Button text="Pattern editor" GridPane.columnIndex="5" GridPane.rowIndex="4" onAction="#editor"/>
     <Button text="Random" GridPane.columnIndex="6" GridPane.rowIndex="4" onAction="#generateRandom" />
     <Label GridPane.columnIndex="7" GridPane.rowIndex="4" fx:id="gen" text="gens"/>
     <Label GridPane.columnIndex="7" GridPane.rowIndex="5" fx:id="dim" text="dim"/>

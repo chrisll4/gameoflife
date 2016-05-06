@@ -24,8 +24,9 @@ public class Main extends Application {
   public void start(Stage stage) throws IOException {
       
     Parent root = FXMLLoader.load(getClass().getResource("FXMLgol.fxml"));
-      
     Scene scene = new Scene(root, 740, 580);
+    String css = this.getClass().getResource("GoLStyleSheet.css").toExternalForm(); 
+    scene.getStylesheets().add(css);
       
     stage.setTitle("Game of Life");
     stage.setScene(scene);
