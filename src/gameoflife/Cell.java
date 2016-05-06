@@ -7,12 +7,6 @@ package gameoflife;
  */
 public class Cell {
   
-  /**
-   * Empty constructor
-   */
-  public Cell() {
-  }
-  
   boolean alive = false;
   byte neighbours = 0;
   

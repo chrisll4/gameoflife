@@ -44,21 +44,24 @@ public class GoLController implements Initializable {
   @FXML private Canvas canvas;
   @FXML private Label gen;
   @FXML private Label dim;
+  @FXML private Label fpsLab;
   private GraphicsContext gc;
   private Timeline timeline;
-  private double frameRate = 30;
+  private double frameRate = 10;
   private int gens = 0;
+  private Duration dura;
+  private KeyFrame keyf;
   @FXML private ChoiceBox gridSize;
   @FXML private ChoiceBox patternList;
   @FXML private Slider gridSlider;
-
+  @FXML private Slider fpsSlider;
   
   /**
    * Method to start animation if not running, or pause animation if running
    * @param e  Button pressed
    * @author Fredrik
    */
-  @FXML
+  @FXML 
   private void startStop(ActionEvent e) {
     if (timeline.getStatus() == Status.RUNNING) {
       timeline.pause();
@@ -72,7 +75,7 @@ public class GoLController implements Initializable {
    * @param e  Button pressed
    * @author Fredrik
    */
-  @FXML
+  @FXML 
   private void reset(ActionEvent e) {
     timeline.stop();
     gb.setPattern(gb.patOrigin);
@@ -86,7 +89,7 @@ public class GoLController implements Initializable {
    * and draw the pattern on the canvas
    * @author Fredrik
    */
-  @FXML
+  @FXML 
   private void generateRandom() {
     timeline.stop();
     Patterns.generateRandomPattern(gb.boardCols, gb.boardRows);
@@ -114,8 +117,11 @@ public class GoLController implements Initializable {
     gen.setText("Generations: "+gens);
   }
   
+  /**
+   * Method to update Grid label
+   */
   private void updateDim() {
-    dim.setText("Dimensions: " + gb.boardCols + "x" + gb.boardRows);
+    dim.setText("Grid: " + gb.boardCols + "x" + gb.boardRows);
   }
   
   /**
@@ -123,9 +129,26 @@ public class GoLController implements Initializable {
    * @param fps  Value to change framerate to
    * @author Fredrik
    */
-  @FXML
   private void setFrameRate(int fps) {
     frameRate = fps;
+    dura = Duration.millis(1000/frameRate);
+    keyf = new KeyFrame(dura, (ActionEvent e) -> {
+      gb.nextGeneration();
+      draw();
+      updateGens();
+    });
+    
+    timeline.stop();
+    timeline.getKeyFrames().setAll(keyf);
+    timeline.play();
+  }
+  
+  /**
+   * Method that updates the FPS label in the GUI
+   * @author Fredrik
+   */
+  private void updateFrameRate() {
+    fpsLab.setText("FPS: " + frameRate);
   }
   
   /**
@@ -138,11 +161,11 @@ public class GoLController implements Initializable {
   @FXML
   private void reader() throws IOException {
     timeline.pause();
-    Stage anim = new Stage();
+    Stage stg = new Stage();
     Parent root = new Group();
     Scene scene = new Scene(root, 200, 200);
-    anim.setScene(scene);
-    anim.setTitle("Hei");
+    stg.setScene(scene);
+    stg.setTitle("Load pattern from RLE file");
     
     GridPane grid = new GridPane();
     grid.setPadding(new Insets(10, 10, 10, 10));      
@@ -150,9 +173,10 @@ public class GoLController implements Initializable {
     grid.setHgap(10);
     scene.setRoot(grid);
     
-    Label lab = new Label("Velg RLE-fil");
-    Button btn = new Button("Hei");
-    Button btm = new Button("Hå");
+    Label lab = new Label("Load local file");
+    Label labUrl = new Label("Load from URL:");
+    Button btn = new Button("Choose file...");
+    Button btm = new Button("Enter URL...");
     
     btn.setMinWidth(100);
     btn.setMinHeight(50);
@@ -167,6 +191,7 @@ public class GoLController implements Initializable {
         gb.setPattern(read.tab);
         gb.populateBoard();
         draw();
+        stg.hide();
       } catch (NoSuchElementException nse) {
         System.out.println("Window closed, no file specified");
         try {
@@ -184,7 +209,7 @@ public class GoLController implements Initializable {
       FileChooser.ExtensionFilter filt = new FileChooser.ExtensionFilter("RLE files","*.rle");
       fc.setTitle("Choose RLE-file to load");
       fc.setSelectedExtensionFilter(filt);
-      file = fc.showOpenDialog(anim);
+      file = fc.showOpenDialog(stg);
       if (file != null) {
         path = file.toPath();
         Reader read = new Reader();
@@ -192,6 +217,7 @@ public class GoLController implements Initializable {
         gb.setPattern(read.tab);
         gb.populateBoard();
         draw();
+        stg.hide();
       } else {
         System.out.println("Window closed, no file selected");
         try {
@@ -205,12 +231,13 @@ public class GoLController implements Initializable {
     
     grid.add(lab, 0, 0);
     grid.add(btn, 0, 1);
-    grid.add(btm, 0, 2);
+    grid.add(labUrl, 0, 2);
+    grid.add(btm, 0, 3);
     
-    anim.show();
+    stg.show();
   }
   
-  Gameboard gb;
+  GameboardDynamic gb;
   
   /**
    * Method to set up the initial settings of the program, including
@@ -218,89 +245,60 @@ public class GoLController implements Initializable {
    * as well as drawing the initial configuration to the canvas object.
    * @param url Default URL object
    * @param rb  Default ResourceBundle object
-   * @author Fredrik, Christine (pair programming): basic UI setup
+   * @author Fredrik, Christine (pair programming): UI setup
    * @author Fredrik: listeners, animation, board population
    */
   @Override
   public void initialize(URL url, ResourceBundle rb) {
     
     //Create Gameboard object, set initial pattern, and populate board with cells
-    gb = new Gameboard();
+    gb = new GameboardDynamic();
     gb.setPattern(Patterns.glider);
     gb.populateBoard();
     
+    //Set initial text for dynamic labels
     resetGens();
     updateDim();
+    updateFrameRate();
+    
+    //Setup for gridSlider
     gridSlider.setShowTickMarks(false);
     gridSlider.setMin(30);
     gridSlider.setMax(480);
     gridSlider.setValue(30);
     
+    //Listener for grid size slider
     gridSlider.valueProperty().addListener((
-               ObservableValue<? extends Number> ov,
-               Number oval, Number nval) -> {
-                  gb.setBoardDim((int)(1.5*nval.intValue()), nval.intValue());
-                  gb.setPattern(gb.board);
-                  gb.populateBoard();
-                  
-                  updateDim();
-                  draw();
-                  // HIE HEI HEI
-                  
-         }
+            ObservableValue<? extends Number> ov,
+            Number oval, Number nval) -> {
+              gb.setBoardDim((int)(1.5*nval.intValue()), nval.intValue());
+              gb.setPattern(gb.board);
+              gb.populateBoard();
+              updateDim();
+              draw();      
+            }
       );
     
+    fpsSlider.setMin(1);
+    fpsSlider.setMax(60);
+    fpsSlider.setValue(10);
+    fpsSlider.setMajorTickUnit(20);
+    fpsSlider.setShowTickMarks(true);
     
-    /*
-    //Set items in the gridSize ChoiceBox
-    gridSize.setItems(FXCollections.observableArrayList(
-          "45x30","90x60","120x80")
-    );*/
-    
-    
-    
-    /*
-    Add listener to gridSize ChoiceBox, to determine which item on the
-    list has been chosen, and then define what to do based on the index of 
-    the item chosen.
-    */
-    /*
-    gridSize.getSelectionModel().selectedIndexProperty().addListener(new
-          ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue ov, Number val, Number nval) {
-              switch (nval.intValue()) {
-                case 0:
-                  timeline.pause();
-                  gb.setBoardDim(45, 30);
-                  gb.populateBoard();
-                  draw();
-                  resetGens();
-                  break;
-                case 1:
-                  timeline.pause();
-                  gb.setBoardDim(90, 60);
-                  gb.populateBoard();
-                  draw();
-                  resetGens();
-                  break;
-                case 2:
-                  timeline.pause();
-                  gb.setBoardDim(120, 80);
-                  gb.populateBoard();
-                  draw();
-                  resetGens();
-                  break;
-                default:
-                  break;
+    //Listener for FPS slider
+    fpsSlider.valueProperty().addListener((
+            ObservableValue<? extends Number> ov,
+            Number oval, Number nval) -> {
+              if (fpsSlider.isValueChanging()) {
+                setFrameRate(nval.intValue());
+                updateFrameRate();
               }
-            }
-          });
-    */
+      }
+    );
     
     //Set items in the patternList ChoiceBox
     patternList.setItems(FXCollections.observableArrayList(
-          "Glider","Gosper glider gun","Pulsar","Random","Load RLE file")
+          "Glider","Gosper glider gun","Pulsar")
     );
     
     /*
@@ -334,28 +332,23 @@ public class GoLController implements Initializable {
                   resetGens();
                   draw();
                   break;
-                case 3:
-                  timeline.pause();
-                  generateRandom();
-                  break;
-                case 4:
-                  timeline.pause();
-                  try {
-                    reader();
-                  } catch (IOException io) {
-                    System.err.println("Input error");
-                  }
                 default:
                   break;
               }
             }
           });
     
+    //Define initial duration of each keyframe
+    dura = Duration.millis(1000/frameRate);
     
-    Duration dura = Duration.millis(1000/frameRate);
+    //Set actions for each keyframe
+    keyf = new KeyFrame(dura, (ActionEvent e) -> {
+      gb.nextGeneration();
+      draw();
+      updateGens();
+    });
     
-    //Make each frame run the draw() method on init
-    KeyFrame keyf = new KeyFrame(dura, (ActionEvent e) -> {gb.nextGeneration(); draw(); updateGens();});
+    //Create timeline object
     timeline = new Timeline();
     
     //Set animation to run indefinitely (or until paused)
@@ -385,7 +378,7 @@ public class GoLController implements Initializable {
     //Loop through board cells, looking for living ones
     for (int i=0; i<gb.boardCols;i++) {
       for (int j=0; j<gb.boardRows;j++) {
-        if (gb.board[i][j].alive == true) {
+        if (gb.board.get(i).get(j).alive == true) {
           //if cell is alive, set cell colour
           gc.setFill(Color.DARKSLATEGREY);
           //then draw the living cell

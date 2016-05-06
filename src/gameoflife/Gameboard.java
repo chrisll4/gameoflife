@@ -61,15 +61,6 @@ public class Gameboard {
     is larger than the size of the board, and if so, enlarges the board
     so the pattern fits inside
     */
-    if (pattern.length > boardCols || pattern[0].length > boardRows) {
-      if (pattern.length > pattern[0].length) {
-        boardCols = (int) (pattern.length * 1.2);
-        boardRows = (int) ((2*boardCols) / 3);
-      } else if (pattern[0].length >= pattern.length) {
-        boardRows = (int) (1.2 * pattern[0].length);
-        boardCols = (int) (1.5 * boardRows);
-      }
-    }
     
     for (int i=0; i<patCols; i++) {
       for (int j=0; j<patRows; j++) {
@@ -98,16 +89,6 @@ public class Gameboard {
     patRows = tab[0].length;
     
     pattern = new Cell[patCols][patRows];
-    
-    if (pattern.length > boardCols || pattern[0].length > boardRows) {
-      if (pattern.length > pattern[0].length) {
-        boardCols = (int) (pattern.length * 1.2);
-        boardRows = (int) ((2*boardCols) / 3);
-      } else if (pattern[0].length >= pattern.length) {
-        boardRows = (int) (1.2 * pattern[0].length);
-        boardCols = (int) (1.5 * boardRows);
-      }
-    }
     
     for (int i=0; i<patCols; i++) {
       for (int j=0; j<patRows; j++) {
@@ -153,25 +134,25 @@ public class Gameboard {
     /*
     Place Cells from pattern into board, centered by "boardCols/2-patCols/2".
     */
-    float ratio = patRows/boardRows;
-    
-    if (ratio>1) {
-      for (int i=0; i<(int)(patCols*ratio); i++) {
-        for (int j=0; j<(int)(patRows*ratio); j++) {        
-          if (pattern[i][j].alive == true) {
-            board[i+boardCols/2-(int)(patCols*ratio)/2][j+boardRows/2-(int)(patRows*ratio)/2].alive = true;
-          }
-        }
-      }
-    } else {
-      for (int i=0; i<patCols; i++) {
+    /*
+    if (patCols>boardCols) {
+      int ratio = patCols/boardCols;
+      for (int i=(); i<patCols; i++) {
         for (int j=0; j<patRows; j++) {        
           if (pattern[i][j].alive == true) {
             board[i+boardCols/2-patCols/2][j+boardRows/2-patRows/2].alive = true;
           }
         }
       }
-    }
+    } else {*/
+      for (int i=0; i<patCols; i++) {
+        for (int j=0; j<patRows; j++) {
+          if (pattern[(i+patCols)%patCols][(j+patRows)%patRows].alive == true) {
+            board[i+boardCols/2-patCols/2][j+boardRows/2-patRows/2].alive = true;
+          }
+        }
+      }
+    //}
   }
   
   int totNeighbours;
