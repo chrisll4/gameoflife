@@ -56,12 +56,7 @@ public class Gameboard {
     pattern = new Cell[patCols][patRows];
     patOrigin = new Cell[patCols][patRows];
     
-    /*
-    Hacky solution for "dynamic" board, that checks if the size of the pattern
-    is larger than the size of the board, and if so, enlarges the board
-    so the pattern fits inside
-    */
-    
+    //Put values in Cell arrays
     for (int i=0; i<patCols; i++) {
       for (int j=0; j<patRows; j++) {
         pattern[i][j] = new Cell();

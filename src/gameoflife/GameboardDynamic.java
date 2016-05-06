@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Game board class containing information
- * @author Fredrik, Christine (dynamic)
+ * @author Fredrik, made dynamic by Christine
  */
 public class GameboardDynamic {
     
